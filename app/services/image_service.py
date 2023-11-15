@@ -3,7 +3,6 @@ import os
 import traceback
 import uuid
 from threading import Thread, Lock
-from collections import defaultdict
 
 from app.config.environment_manager import EnvironmentManager
 from app.db.recognized_images_repository import RecognizedImagesRepository

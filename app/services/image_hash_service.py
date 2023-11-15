@@ -24,10 +24,6 @@ class ImageHashService(EnvironmentManager):
             'DHASH_MAX_SIMILARITY_PERCENT',
             'WHASH_HAAR_MAX_SIMILARITY_PERCENT',
             'COLORHASH_MAX_SIMILARITY_PERCENT',
-            'AHASH_SIMILARITY_OUTPUT',
-            'DHASH_SIMILARITY_OUTPUT',
-            'WHASH_HAAR_SIMILARITY_OUTPUT',
-            'COLORHASH_SIMILARITY_OUTPUT'
         ])
 
         self.logger = logging.getLogger(__name__)
@@ -44,10 +40,6 @@ class ImageHashService(EnvironmentManager):
         self.DHASH_MAX_SIMILARITY_PERCENT = float(self.env_vars['DHASH_MAX_SIMILARITY_PERCENT'])
         self.WHASH_HAAR_MAX_SIMILARITY_PERCENT = float(self.env_vars['WHASH_HAAR_MAX_SIMILARITY_PERCENT'])
         self.COLORHASH_MAX_SIMILARITY_PERCENT = float(self.env_vars['COLORHASH_MAX_SIMILARITY_PERCENT'])
-        self.AHASH_SIMILARITY_OUTPUT = float(self.env_vars['AHASH_SIMILARITY_OUTPUT'])
-        self.DHASH_SIMILARITY_OUTPUT = float(self.env_vars['DHASH_SIMILARITY_OUTPUT'])
-        self.WHASH_HAAR_SIMILARITY_OUTPUT = float(self.env_vars['WHASH_HAAR_SIMILARITY_OUTPUT'])
-        self.COLORHASH_SIMILARITY_OUTPUT = float(self.env_vars['COLORHASH_SIMILARITY_OUTPUT'])
 
     def _generate_image_xxhash(self, image_path):
         """
@@ -174,13 +166,11 @@ class ImageHashService(EnvironmentManager):
                 tuple: A tuple containing a boolean indicating similarity and the corresponding similarity output value.
         """
         for hash_type in ['ahash', 'dhash', 'whash_haar', 'colorhash']:
-            if imagehash.hex_to_hash(target_hashes[hash_type]) - imagehash.hex_to_hash(
-                    hashes_to_compare[hash_type]) <= getattr(self, f'{hash_type.upper()}_MAX_SIMILARITY_PERCENT'):
-                self.logger.debug(
-                    f'Images are similar based on {hash_type}: '
-                    f'{getattr(self, f"{hash_type.upper()}_SIMILARITY_OUTPUT")}'
-                )
-                return True, getattr(self, f'{hash_type.upper()}_SIMILARITY_OUTPUT')
+            similarity = imagehash.hex_to_hash(target_hashes[hash_type]) - imagehash.hex_to_hash(
+                    hashes_to_compare[hash_type])
+            if similarity <= getattr(self, f'{hash_type.upper()}_MAX_SIMILARITY_PERCENT'):
+                self.logger.debug(f'Images are similar based on {hash_type}: {similarity}')
+                return True, f'{hash_type.upper()}:{similarity}'
 
         self.logger.debug('Images are not similar')
         return False, 0

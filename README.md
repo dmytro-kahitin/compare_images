@@ -19,6 +19,7 @@ For Windows:
 git clone https://github.com/dmytro-kahitin/compare_images.git
 cd compare_images
 conda create -n compare_images python=3.10
+conda activate compare_images
 ```
 
 For Linux:
@@ -27,6 +28,7 @@ sudo apt-get update && apt-get install -y ffmpeg libgl1 libsm6 libxext6 gcc git
 git clone https://github.com/dmytro-kahitin/compare_images.git
 cd compare_images
 conda create -n compare_images python=3.10
+conda activate compare_images
 ```
 
 Install all required packages:
@@ -36,7 +38,6 @@ conda install -c conda-forge pika -y
 conda install -c conda-forge python-dotenv -y
 conda install -c anaconda pymongo -y
 conda install -c anaconda scikit-learn -y
-pip install logging
 pip install xxhash
 pip install imagehash
 pip install PyMuPDF==1.20.2
