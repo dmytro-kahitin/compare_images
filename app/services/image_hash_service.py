@@ -2,7 +2,7 @@ import os
 import logging
 import xxhash
 import imagehash
-from PIL import Image
+from PIL import Image, ImageFile
 
 from app.config.environment_manager import EnvironmentManager
 
@@ -25,6 +25,8 @@ class ImageHashService(EnvironmentManager):
             'WHASH_HAAR_MAX_SIMILARITY_PERCENT',
             'COLORHASH_MAX_SIMILARITY_PERCENT',
         ])
+
+        ImageFile.LOAD_TRUNCATED_IMAGES = True
 
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(self.logger_level)

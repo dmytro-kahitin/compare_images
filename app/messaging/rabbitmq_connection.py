@@ -55,7 +55,7 @@ class RabbitMQConnection(EnvironmentManager):
 
     def _setup_connection(self):
         """
-            Setup RabbitMQ connection parameters.
+        Setup RabbitMQ connection parameters and declare necessary queues with DLX configurations.
         """
         credentials = pika.PlainCredentials(self.rabbitmq_username, self.rabbitmq_password)
         self.parameters = pika.ConnectionParameters(
@@ -63,9 +63,40 @@ class RabbitMQConnection(EnvironmentManager):
             credentials, heartbeat=self.rabbitmq_heartbeat,
             blocked_connection_timeout=self.rabbitmq_blocked_connection_timeout
         )
+
         self.connection = None
         self.channel = None
-        self.connect()
+
+        # Attempt to connect to RabbitMQ
+        while not self.connection or self.connection.is_closed:
+            try:
+                self.connection = pika.BlockingConnection(self.parameters)
+                self.channel = self.connection.channel()
+
+                # Declare Dead Letter Exchange and Queue
+                self.dlx_exchange = 'dlx_exchange'
+                self.dlx_queue = 'dlx_queue'
+                self.channel.exchange_declare(exchange=self.dlx_exchange, exchange_type='direct', durable=True)
+                self.channel.queue_declare(queue=self.dlx_queue, durable=True)
+                self.channel.queue_bind(queue=self.dlx_queue, exchange=self.dlx_exchange, routing_key='rejected')
+
+                # Dead Letter Queue Arguments
+                dead_letter_arguments = {
+                    'x-dead-letter-exchange': self.dlx_exchange,
+                    'x-dead-letter-routing-key': 'rejected'
+                }
+
+                # Declare application queues with Dead Letter Queue arguments
+                self.channel.queue_declare(queue=OCR_IMAGE_QUEUE, durable=True, arguments=dead_letter_arguments)
+                self.channel.queue_declare(queue=COMPARE_IMAGES_QUEUE, durable=True, arguments=dead_letter_arguments)
+                self.channel.queue_declare(queue=RESPONSE_QUEUE, durable=True, arguments=dead_letter_arguments)
+                self.channel.queue_declare(queue=MAINTENANCE_QUEUE, durable=True, arguments=dead_letter_arguments)
+
+                self.channel.basic_qos(prefetch_count=1)
+                self.logger.info('Connected to RabbitMQ')
+            except AMQPConnectionError:
+                self.logger.error('Failed to connect to RabbitMQ, retrying...')
+                time.sleep(5)
 
     def connect(self):
         """

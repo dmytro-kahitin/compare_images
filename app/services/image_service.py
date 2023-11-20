@@ -4,6 +4,8 @@ import traceback
 import uuid
 from threading import Thread, Lock
 
+from pika import BasicProperties
+
 from app.config.environment_manager import EnvironmentManager
 from app.db.recognized_images_repository import RecognizedImagesRepository
 from app.services.image_hash_service import ImageHashService
@@ -96,7 +98,15 @@ class ImageService(EnvironmentManager):
             channel.basic_ack(delivery_tag=method.delivery_tag)
         except Exception as e:
             self.logger.exception(f'Exception while processing message from {queue_name}', exc_info=e)
-            channel.basic_nack(delivery_tag=method.delivery_tag, requeue=True)
+            # Negative acknowledgment without requeuing
+            channel.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
+            # Publish the failed message to the Dead Letter Exchange
+            channel.basic_publish(
+                exchange='dlx_exchange',
+                routing_key='rejected',
+                properties=BasicProperties(delivery_mode=2),
+                body=body
+            )
         finally:
             if queue_name == OCR_IMAGE_QUEUE:
                 queue_status = channel.queue_declare(queue=OCR_IMAGE_QUEUE, passive=True)
