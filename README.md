@@ -1,11 +1,10 @@
-# Compare Images
+# Image OCR Similarity
 
 This project utilizes RabbitMQ for task queuing and MongoDB for data storage to perform Optical Character Recognition (OCR) on images and text comparison. It uses the PaddleOCR library for OCR and the Sklearn library for text comparison.
 
 ## Features
 
  - Perform OCR on images.
- - Compare images using hash algorithms.
  - Compare texts using Bag-of-Words and TF-IDF models.
  - Task queuing using RabbitMQ.
  - Store OCR results in MongoDB.
@@ -16,33 +15,24 @@ This project requires Conda (Anaconda or Miniconda). Clone this repository and c
 
 For Windows:
 ```
-git clone https://github.com/dmytro-kahitin/compare_images.git
-cd compare_images
-conda create -n compare_images python=3.10
-conda activate compare_images
+git clone https://gitlab.lucid.berlin/lucid/image-ocr-similarity.git
+cd image-ocr-similarity
+conda create -n lucid-ocr python=3.10
 ```
 
 For Linux:
 ```
 sudo apt-get update && apt-get install -y ffmpeg libgl1 libsm6 libxext6 gcc git
-git clone https://github.com/dmytro-kahitin/compare_images.git
-cd compare_images
-conda create -n compare_images python=3.10
-conda activate compare_images
+git clone https://gitlab.lucid.berlin/lucid/image-ocr-similarity.git
+cd image-ocr-similarity
+conda create -n lucid-ocr python=3.10
 ```
 
 Install all required packages:
 
 ```
-conda install -c conda-forge pika -y
-conda install -c conda-forge python-dotenv -y
-conda install -c anaconda pymongo -y
-conda install -c anaconda scikit-learn -y
-pip install xxhash
-pip install imagehash
-pip install PyMuPDF==1.20.2
-pip install paddleocr
-pip install paddlepaddle
+conda activate lucid-ocr
+pip install -r requirements.txt
 ```
 
 ## Environment Variables
@@ -65,6 +55,13 @@ AHASH_MAX_SIMILARITY_PERCENT = 4
 DHASH_MAX_SIMILARITY_PERCENT = 8
 WHASH_HAAR_MAX_SIMILARITY_PERCENT = 8
 COLORHASH_MAX_SIMILARITY_PERCENT = 0
+
+# SIMILARITY_OUTPUT 
+# Variables represent the similarity percentage that the system will return if images are found similar using respective hash algorithms.
+AHASH_SIMILARITY_OUTPUT = 91.41
+DHASH_SIMILARITY_OUTPUT = 91.42
+WHASH_HAAR_SIMILARITY_OUTPUT = 91.43
+COLORHASH_SIMILARITY_OUTPUT = 91.44
 
 # RabbitMQ settings (Set these as per your RabbitMQ configuration)
 RABBITMQ_HOST=
@@ -91,7 +88,7 @@ MONGODB_SIMILAR_IMAGES_COLLECTION=
 Activate the Conda environment:
 
 ```
-conda activate compare_images
+conda activate lucid-ocr
 ```
 
 To start the project, run:
@@ -99,3 +96,10 @@ To start the project, run:
 ```
 python main.py
 ```
+
+After running the project, you can run the test:
+
+```
+python test.py
+```
+

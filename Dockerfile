@@ -11,16 +11,9 @@ RUN conda create -n compare_images python=3.10
 # Activate environment
 SHELL ["conda", "run", "-n", "compare_images", "/bin/bash", "-c"]
 ARG INSTALL_CACHEBUST=1
-# Install Conda packages from various channels
-RUN conda install -c conda-forge pika -y
-RUN conda install -c conda-forge python-dotenv -y
-RUN conda install -c anaconda pymongo -y
-RUN conda install -c anaconda scikit-learn -y
-RUN pip install xxhash
-RUN pip install imagehash
-RUN pip install PyMuPDF==1.20.2
-RUN pip install paddleocr
-RUN pip install paddlepaddle
+COPY requirements.txt .
+COPY model .
+RUN pip install -r requirements.txt
 
 # Copy code and fix libGL
 # The code to run when container is started:

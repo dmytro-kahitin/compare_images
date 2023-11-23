@@ -1,3 +1,4 @@
+import os.path
 import cv2
 import logging
 import time
@@ -24,7 +25,10 @@ class ImageOCRService(EnvironmentManager):
         self.logger.setLevel(self.logger_level)
         self.logger.info('Initializing OCR service...')
 
-        self.infer = PaddleOCR(use_angle_cls=True, lang='en', show_log=False, det_model_dir='model')
+        self.infer = PaddleOCR(use_angle_cls=True, lang='en', show_log=False,
+                               det_model_dir=os.path.join('model', 'en_PP-OCRv3_det_infer'),
+                               rec_model_dir=os.path.join('model', 'en_PP-OCRv3_rec_infer'),
+                               cls_model_dir=os.path.join('model', 'ch_ppocr_mobile_v2.0_cls_infer'))
 
     def get_text_from_image(self, image_path):
         """
