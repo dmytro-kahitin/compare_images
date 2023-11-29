@@ -261,9 +261,10 @@ class ImageService(EnvironmentManager):
 
         similar_images_info = []
         for image in all_images:
-            is_similar, similarity_percentage = self.image_hash_service.is_similar(image_hashes, image)
+            is_similar, similarity_percentage = self.image_similarity_service.is_similar(recognized_text,
+                                                                                         image.get('recognized_text'))
             if not is_similar:
-                is_similar, similarity_percentage = self.image_similarity_service.is_similar(recognized_text, image.get('recognized_text'))
+                is_similar, similarity_percentage = self.image_hash_service.is_similar(image_hashes, image)
             if is_similar:
                 similar_images_info.append({"id": image["_id"], "similarity": similarity_percentage})
 

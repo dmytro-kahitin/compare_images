@@ -15,23 +15,23 @@ This project requires Conda (Anaconda or Miniconda). Clone this repository and c
 
 For Windows:
 ```
-git clone https://gitlab.lucid.berlin/lucid/image-ocr-similarity.git
-cd image-ocr-similarity
-conda create -n lucid-ocr python=3.10
+git clone https://github.com/dmytro-kahitin/compare_images.git
+cd compare_images
+conda create -n compare_images python=3.10
 ```
 
 For Linux:
 ```
 sudo apt-get update && apt-get install -y ffmpeg libgl1 libsm6 libxext6 gcc git
-git clone https://gitlab.lucid.berlin/lucid/image-ocr-similarity.git
-cd image-ocr-similarity
-conda create -n lucid-ocr python=3.10
+git clone https://github.com/dmytro-kahitin/compare_images.git
+cd compare_images
+conda create -n compare_images python=3.10
 ```
 
 Install all required packages:
 
 ```
-conda activate lucid-ocr
+conda activate compare_images
 pip install -r requirements.txt
 ```
 
@@ -55,13 +55,6 @@ AHASH_MAX_SIMILARITY_PERCENT = 4
 DHASH_MAX_SIMILARITY_PERCENT = 8
 WHASH_HAAR_MAX_SIMILARITY_PERCENT = 8
 COLORHASH_MAX_SIMILARITY_PERCENT = 0
-
-# SIMILARITY_OUTPUT 
-# Variables represent the similarity percentage that the system will return if images are found similar using respective hash algorithms.
-AHASH_SIMILARITY_OUTPUT = 91.41
-DHASH_SIMILARITY_OUTPUT = 91.42
-WHASH_HAAR_SIMILARITY_OUTPUT = 91.43
-COLORHASH_SIMILARITY_OUTPUT = 91.44
 
 # RabbitMQ settings (Set these as per your RabbitMQ configuration)
 RABBITMQ_HOST=
@@ -88,7 +81,7 @@ MONGODB_SIMILAR_IMAGES_COLLECTION=
 Activate the Conda environment:
 
 ```
-conda activate lucid-ocr
+conda activate compare_images
 ```
 
 To start the project, run:
